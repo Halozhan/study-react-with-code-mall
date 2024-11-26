@@ -17,7 +17,10 @@ const todoRouter = () => {
         </Suspense>
       ),
     },
-    { path: "", element: <Navigate replace to="list" /> },
+    {
+      path: "",
+      element: <Navigate replace to="list" />,
+    },
     {
       path: "read/:tno",
       element: (

@@ -1,4 +1,5 @@
 import BasicLayout from "../layouts/BasicLayout";
+
 const AboutPage = () => {
   return (
     <BasicLayout>
