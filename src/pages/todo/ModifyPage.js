@@ -12,4 +12,5 @@ const ModifyPage = () => {
     </div>
   );
 };
+
 export default ModifyPage;

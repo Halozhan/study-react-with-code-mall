@@ -7,4 +7,5 @@ const AboutPage = () => {
     </BasicLayout>
   );
 };
+
 export default AboutPage;

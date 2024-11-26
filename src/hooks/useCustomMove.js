@@ -68,4 +68,5 @@ const useCustomMove = () => {
 
   return { moveToList, moveToModify, moveToRead, page, size, refresh }; //refresh 추가
 };
+
 export default useCustomMove;

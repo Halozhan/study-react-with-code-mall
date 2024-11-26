@@ -60,4 +60,5 @@ const ListComponent = () => {
     </div>
   );
 };
+
 export default ListComponent;

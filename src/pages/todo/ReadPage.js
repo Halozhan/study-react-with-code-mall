@@ -12,4 +12,5 @@ const ReadPage = () => {
     </div>
   );
 };
+
 export default ReadPage;

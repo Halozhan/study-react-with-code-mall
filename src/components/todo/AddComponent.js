@@ -105,4 +105,5 @@ const AddComponent = () => {
     </div>
   );
 };
+
 export default AddComponent;

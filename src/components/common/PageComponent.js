@@ -37,4 +37,5 @@ const PageComponent = ({ serverData, movePage }) => {
     </div>
   );
 };
+
 export default PageComponent;

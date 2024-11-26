@@ -51,7 +51,6 @@ const ReadComponent = ({ tno }) => {
     </div>
   );
 };
-export default ReadComponent;
 
 const makeDiv = (title, value) => (
   <div className="flex justify-center">
@@ -63,3 +62,5 @@ const makeDiv = (title, value) => (
     </div>
   </div>
 );
+
+export default ReadComponent;

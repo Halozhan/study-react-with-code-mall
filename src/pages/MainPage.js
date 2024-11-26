@@ -7,4 +7,5 @@ const MainPage = () => {
     </BasicLayout>
   );
 };
+
 export default MainPage;
