@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postAdd } from "../../api/productsApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import FetchingModal from "../common/FetchingModal";
@@ -13,22 +14,21 @@ const initState = {
 };
 
 const AddComponent = () => {
+  //기본적으로 필요
   const [product, setProduct] = useState({ ...initState });
   const uploadRef = useRef();
+  const { moveToList } = useCustomMove();
 
-  const [fetching, setFetching] = useState(false);
-  const [result, setResult] = useState(null);
-
-  const { moveToList } = useCustomMove(); //이동을 위한 함수
-
+  //입력값 처리
   const handleChangeProduct = (e) => {
     product[e.target.name] = e.target.value;
     setProduct({ ...product });
   };
 
+  const addMutation = useMutation((product) => postAdd(product)); //리액트 쿼리
+
   const handleClickAdd = (e) => {
     const files = uploadRef.current.files;
-
     const formData = new FormData();
 
     for (let i = 0; i < files.length; i++) {
@@ -40,31 +40,25 @@ const AddComponent = () => {
     formData.append("pdesc", product.pdesc);
     formData.append("price", product.price);
 
-    console.log(formData);
-
-    setFetching(true);
-
-    postAdd(formData).then((data) => {
-      setFetching(false);
-      setResult(data.result);
-    });
+    addMutation.mutate(formData); //기존 코드에서 변경
   };
 
-  const closeModal = () => {
-    //ResultModal 종료
+  const queryClient = useQueryClient();
 
-    setResult(null);
-    moveToList({ page: 1 }); //모달 창이 닫히면 이동
+  const closeModal = () => {
+    queryClient.invalidateQueries("products/list");
+
+    moveToList({ page: 1 });
   };
 
   return (
     <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-      {fetching ? <FetchingModal /> : <></>}
+      {addMutation.isLoading ? <FetchingModal /> : <></>}
 
-      {result ? (
+      {addMutation.isSuccess ? (
         <ResultModal
-          title={"Product Add Result"}
-          content={`${result}번 등록 완료`}
+          title={"Add Result"}
+          content={`Add Success ${addMutation.data.result}`}
           callbackFn={closeModal}
         />
       ) : (

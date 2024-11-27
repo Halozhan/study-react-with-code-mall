@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { getList } from "../../api/productsApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import FetchingModal from "../common/FetchingModal";
 
+import { useQuery } from "@tanstack/react-query";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import PageComponent from "../common/PageComponent";
@@ -23,31 +23,33 @@ const initState = {
 };
 
 const ListComponent = () => {
+  const { moveToLoginReturn } = useCustomLogin();
+
   const { page, size, refresh, moveToList, moveToRead } = useCustomMove();
 
-  const { exceptionHandle } = useCustomLogin();
+  const { isFetching, data, error, isError } = useQuery(
+    ["products/list", { page, size, refresh }],
+    () => getList({ page, size }),
+    { staleTime: 1000 * 5 }
+  );
 
-  //serverData는 나중에 사용
-  const [serverData, setServerData] = useState(initState);
+  const handleClickPage = (pageParam) => {
+    // if (pageParam.page === parseInt(page)) {
+    //   queryClient.invalidateQueries("products/list");
+    // }
+    moveToList(pageParam);
+  };
 
-  //for FetchingModal
-  const [fetching, setFetching] = useState(false);
+  if (isError) {
+    console.log(error);
+    return moveToLoginReturn();
+  }
 
-  useEffect(() => {
-    setFetching(true);
-
-    getList({ page, size })
-      .then((data) => {
-        console.log(data);
-        setServerData(data);
-        setFetching(false);
-      })
-      .catch((err) => exceptionHandle(err));
-  }, [page, size, refresh]);
+  const serverData = data || initState;
 
   return (
     <div className="border-2 border-blue-100 mt-10 mr-2 ml-2">
-      {fetching ? <FetchingModal /> : <></>}
+      {isFetching ? <FetchingModal /> : <></>}
 
       <div className="flex flex-wrap mx-auto p-6">
         {serverData.dtoList.map((product) => (
@@ -81,7 +83,7 @@ const ListComponent = () => {
 
       <PageComponent
         serverData={serverData}
-        movePage={moveToList}
+        movePage={handleClickPage}
       ></PageComponent>
     </div>
   );

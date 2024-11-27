@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getOne } from "../../api/productsApi";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomCart from "../../hooks/useCustomCart";
@@ -17,13 +17,12 @@ const initState = {
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ pno }) => {
-  const [product, setProduct] = useState(initState);
-
-  //화면 이동용 함수
   const { moveToList, moveToModify } = useCustomMove();
 
-  //fetching
-  const [fetching, setFetching] = useState(false);
+  const { isFetching, data } = useQuery(["products", pno], () => getOne(pno), {
+    staleTime: 1000 * 10,
+    retry: 1,
+  });
 
   //장바구니 기능
   const { changeCart, cartItems } = useCustomCart();
@@ -48,18 +47,11 @@ const ReadComponent = ({ pno }) => {
     changeCart({ email: loginState.email, pno: pno, qty: qty });
   };
 
-  useEffect(() => {
-    setFetching(true);
-
-    getOne(pno).then((data) => {
-      setProduct(data);
-      setFetching(false);
-    });
-  }, [pno]);
+  const product = data || initState;
 
   return (
     <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-      {fetching ? <FetchingModal /> : <></>}
+      {isFetching ? <FetchingModal /> : <></>}
 
       <div className="flex justify-center mt-10">
         <div className="relative mb-4 flex w-full flex-wrap items-stretch">
