@@ -1,11 +1,46 @@
-import { useDispatch, useSelector } from "react-redux";
 import { Navigate, createSearchParams, useNavigate } from "react-router-dom";
-import { loginPostAsync, logout } from "../slices/loginSlice";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { loginPost } from "../api/memberApi";
+import { cartState } from "../atoms/cartState";
+import signinState from "../atoms/signinState";
+import { removeCookie, setCookie } from "../util/cookieUtil";
 
 const useCustomLogin = () => {
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  const [loginState, setLoginState] = useRecoilState(signinState);
+
+  const resetState = useResetRecoilState(signinState);
+
+  const resetCartState = useResetRecoilState(cartState); //장바구니 비우기
+
+  const isLogin = loginState.email ? true : false; //----------로그인 여부
+
+  const doLogin = async (loginParam) => {
+    //----------로그인 함수
+
+    const result = await loginPost(loginParam);
+
+    console.log(result);
+
+    saveAsCookie(result);
+
+    return result;
+  };
+
+  const saveAsCookie = (data) => {
+    setCookie("member", JSON.stringify(data), 1); //1일
+
+    setLoginState(data);
+  };
+
+  const doLogout = () => {
+    //---------------로그아웃 함수
+
+    removeCookie("member");
+    resetState();
+    resetCartState();
+  };
 
   const exceptionHandle = (ex) => {
     console.log("Exception------------------------");
@@ -28,24 +63,6 @@ const useCustomLogin = () => {
       navigate({ pathname: "/member/login", search: errorStr });
       return;
     }
-  };
-
-  const loginState = useSelector((state) => state.loginSlice); //-------로그인 상태
-
-  const isLogin = loginState.email ? true : false; //----------로그인 여부
-
-  const doLogin = async (loginParam) => {
-    //----------로그인 함수
-
-    const action = await dispatch(loginPostAsync(loginParam));
-
-    return action.payload;
-  };
-
-  const doLogout = () => {
-    //---------------로그아웃 함수
-
-    dispatch(logout());
   };
 
   const moveToPath = (path) => {
@@ -72,6 +89,7 @@ const useCustomLogin = () => {
     moveToLogin,
     moveToLoginReturn,
     exceptionHandle,
+    saveAsCookie,
   };
 };
 

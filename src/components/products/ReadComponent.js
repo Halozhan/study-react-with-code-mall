@@ -19,16 +19,14 @@ const host = API_SERVER_HOST;
 const ReadComponent = ({ pno }) => {
   const { moveToList, moveToModify } = useCustomMove();
 
+  const { loginState } = useCustomLogin();
+
+  const { cartItems, changeCart } = useCustomCart();
+
   const { isFetching, data } = useQuery(["products", pno], () => getOne(pno), {
     staleTime: 1000 * 10,
     retry: 1,
   });
-
-  //장바구니 기능
-  const { changeCart, cartItems } = useCustomCart();
-
-  //로그인 정보
-  const { loginState } = useCustomLogin();
 
   const handleClickAddCart = () => {
     let qty = 1;
