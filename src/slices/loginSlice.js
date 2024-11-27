@@ -53,9 +53,9 @@ const loginSlice = createSlice({
         const payload = action.payload;
 
         //닉네임 한글 처리
-        if (payload.nickname) {
-          payload.nickname = encodeURIComponent(payload.nickname);
-        }
+        // if(payload.nickname){
+        //   payload.nickname = encodeURIComponent(payload.nickname)
+        // }
 
         //정상적인 로그인시에만 저장
         if (!payload.error) {
