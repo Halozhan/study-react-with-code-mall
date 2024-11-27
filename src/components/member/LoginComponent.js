@@ -9,10 +9,12 @@ const initState = {
 
 const LoginComponent = () => {
   const [loginParam, setLoginParam] = useState({ ...initState });
+
   const { doLogin, moveToPath } = useCustomLogin();
 
   const handleChange = (e) => {
     loginParam[e.target.name] = e.target.value;
+
     setLoginParam({ ...loginParam });
   };
 
@@ -20,6 +22,7 @@ const LoginComponent = () => {
     doLogin(loginParam) // loginSlice의 비동기 호출
       .then((data) => {
         console.log(data);
+
         if (data.error) {
           alert("이메일과 패스워드를 다시 확인하세요");
         } else {

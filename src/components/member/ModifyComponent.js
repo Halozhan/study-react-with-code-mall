@@ -30,11 +30,11 @@ const ModifyComponent = () => {
 
   const handleClickModify = () => {
     modifyMember(member).then((result) => {
-      setResult("Modified");
+      setResult("Moodified");
     });
   };
 
-  const closeModal = () => {
+  const colseModal = () => {
     setResult(null);
     moveToLogin();
   };
@@ -45,7 +45,7 @@ const ModifyComponent = () => {
         <ResultModal
           title={"회원정보"}
           content={"정보수정완료"}
-          callbackFn={closeModal}
+          callbackFn={colseModal}
         ></ResultModal>
       ) : (
         <></>
